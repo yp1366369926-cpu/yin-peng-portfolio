@@ -22,9 +22,10 @@ const projects = [
   {
     no: "02",
     title: "在线学习体验重塑",
-    en: "LEARNING EXPERIENCE REDESIGN",
+    en: "CCTALK EXPERIENCE REDESIGN",
     category: "MOBILE · WEB · DESIGN SYSTEM",
-    image: asset("project-learning.jpg"),
+    image: asset("projects/cctalk/cover-generated.jpg"),
+    route: "#project/cctalk",
     note: "围绕 CCtalk 等学习产品，持续优化核心功能、内容层级与跨端体验。",
     scope: ["MOBILE", "WEB", "LIVE CLASS", "GROWTH"],
     detail: "围绕学习、直播、课程与社区等核心场景，优化跨端信息层级和操作效率，并通过组件化设计提升版本迭代与协作效率。",
@@ -162,6 +163,38 @@ const xinlimeiLobbyImages = Array.from({ length: 5 }, (_, index) => ({
   src: asset(`projects/xinlimei/lobby-0${index + 1}.jpg`),
   alt: `尚美数智大堂长屏视觉设计 ${index + 1}`,
 }));
+
+const cctalkImages = Array.from({ length: 26 }, (_, index) => ({
+  src: asset(`projects/cctalk/${index + 1}.jpg`),
+  alt: `CCtalk 产品体验重塑项目展示 ${index + 1}`,
+}));
+
+const cctalkGroups = [
+  {
+    no: "01",
+    label: "PROJECT FOUNDATION",
+    title: "从产品定位出发，建立年轻、清晰且有记忆点的品牌体验。",
+    images: cctalkImages.slice(0, 7),
+  },
+  {
+    no: "02",
+    label: "CORE EXPERIENCE",
+    title: "重构移动端与桌面端的学习、直播和内容浏览体验。",
+    images: cctalkImages.slice(7, 16),
+  },
+  {
+    no: "03",
+    label: "COURSE CONVERSION",
+    title: "围绕课程售卖与决策路径，让信息更完整、转化更顺畅。",
+    images: cctalkImages.slice(16, 21),
+  },
+  {
+    no: "04",
+    label: "GROWTH & RETENTION",
+    title: "用积分、活动与荣誉体系连接活跃、留存和长期价值。",
+    images: cctalkImages.slice(21),
+  },
+];
 
 function canUseFinePointer() {
   return typeof window !== "undefined"
@@ -393,7 +426,10 @@ function About() {
           <div className="portrait-overlay">
             <div className="profile-name-line">
               <h3>殷鹏</h3>
-              <span className="verified-badge"><i>✓</i>花瓣认证UI设计师</span>
+              <span className="verified-badge">
+                <img src={asset("verified-badge.png")} alt="" aria-hidden="true" />
+                花瓣认证UI设计师
+              </span>
             </div>
             <p className="profile-role">UI/UX设计师｜6年工作经验｜专业科班</p>
             <div className="profile-info">
@@ -755,6 +791,89 @@ function XinlimeiCase() {
   );
 }
 
+function CctalkCase() {
+  const [lightbox, setLightbox] = useState(null);
+
+  useEffect(() => {
+    document.body.classList.toggle("modal-open", Boolean(lightbox));
+    const close = (event) => event.key === "Escape" && setLightbox(null);
+    window.addEventListener("keydown", close);
+    return () => {
+      window.removeEventListener("keydown", close);
+      document.body.classList.remove("modal-open");
+    };
+  }, [lightbox]);
+
+  return (
+    <>
+      <header className="case-header cctalk-case-header">
+        <a href="#work">← 返回项目</a>
+        <span>CASE STUDY / 02</span>
+        <p>YIN PENG · PRODUCT / UX / UI</p>
+      </header>
+      <main className="case-page cctalk-page">
+        <section className="case-hero cctalk-case-hero">
+          <img
+            src={asset("projects/cctalk/cover-generated.jpg")}
+            alt=""
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+          <div className="case-hero-shade" />
+          <div className="case-hero-copy">
+            <p>ONLINE EDUCATION · MOBILE · DESKTOP</p>
+            <h1>CCtalk<br />体验重塑</h1>
+            <span>围绕学习、直播、课程与社区等核心场景，重构跨端信息层级、品牌语言和关键转化路径。</span>
+            <div>
+              <i>PRODUCT STRATEGY</i>
+              <i>UX / UI</i>
+              <i>VISUAL SYSTEM</i>
+              <i>GROWTH DESIGN</i>
+            </div>
+          </div>
+        </section>
+
+        {cctalkGroups.map((group, groupIndex) => (
+          <section className="case-section case-shell cctalk-section" data-reveal key={group.no}>
+            <div className="case-section-head">
+              <span>{group.no} / {group.label}</span>
+              <h2>{group.title}</h2>
+            </div>
+            <div className="cctalk-gallery">
+              {group.images.map((image, imageIndex) => (
+                <CaseImage
+                  key={image.src}
+                  src={image.src}
+                  alt={image.alt}
+                  loading={groupIndex === 0 && imageIndex === 0 ? "eager" : "lazy"}
+                  onOpen={setLightbox}
+                />
+              ))}
+            </div>
+          </section>
+        ))}
+
+        <section className="case-ending cctalk-ending">
+          <p>END OF CASE / 02</p>
+          <h2>让学习更快乐，<br />也让体验更有价值。</h2>
+          <a href="#work">返回精选项目 <ArrowIcon /></a>
+        </section>
+      </main>
+
+      {lightbox && (
+        <div className="case-lightbox" role="dialog" aria-modal="true" aria-label="作品大图预览">
+          <button className="case-lightbox-backdrop" type="button" aria-label="关闭预览" onClick={() => setLightbox(null)} />
+          <div>
+            <button type="button" onClick={() => setLightbox(null)} aria-label="关闭">CLOSE ×</button>
+            <img src={lightbox.src} alt={lightbox.alt} />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 function GlobalBackground() {
   const showBackground = useDeferredVisualEnabled(260);
 
@@ -802,9 +921,13 @@ function App() {
   }, []);
 
   useLayoutEffect(() => {
-    if (route === "#project/xinlimei") {
+    if (route === "#project/xinlimei" || route === "#project/cctalk") {
       window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      return;
     }
+
+    const target = route && document.querySelector(route);
+    target?.scrollIntoView({ block: "start", behavior: "auto" });
   }, [route]);
 
   useEffect(() => {
@@ -832,6 +955,17 @@ function App() {
         <AmbientBloom />
         <Cursor />
         <XinlimeiCase />
+      </>
+    );
+  }
+
+  if (route === "#project/cctalk") {
+    return (
+      <>
+        <GlobalBackground />
+        <AmbientBloom />
+        <Cursor />
+        <CctalkCase />
       </>
     );
   }
