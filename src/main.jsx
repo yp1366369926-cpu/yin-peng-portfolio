@@ -5,6 +5,7 @@ import "./styles.css";
 const LazyGrainient = lazy(() => import("./Grainient"));
 const LazySideRays = lazy(() => import("./SideRays"));
 const asset = (path) => `${import.meta.env.BASE_URL}assets/${path}`;
+const absoluteAsset = (path) => new URL(asset(path), document.baseURI).href;
 
 const projects = [
   {
@@ -325,7 +326,7 @@ function Hero() {
   const showSideRays = useDeferredVisualEnabled(420);
 
   return (
-    <section className="hero" id="top" style={{ "--hero-clouds-url": `url("${asset("hero-clouds-v2.jpg")}")` }}>
+    <section className="hero" id="top" style={{ "--hero-clouds-url": `url("${absoluteAsset("hero-clouds-v2.jpg")}")` }}>
       <div className="hero-backdrop" aria-hidden="true" />
       <div className="hero-wash" />
       <div className="hero-grain" />
