@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -16,6 +16,7 @@ concurrency:
 
 jobs:
   build:
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,19 +39,37 @@ jobs:
       - name: Build site
         run: pnpm build
 
+      - name: Sync static build to repository root
+        run: |
+          rm -rf assets
+          cp -R dist/assets ./assets
+          cp dist/index.html ./index.html
+          touch .nojekyll
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html assets .nojekyll
+          if git diff --cached --quiet; then
+            echo "Static build is already up to date."
+          else
+            git commit -m "Publish built portfolio"
+            git push origin HEAD:main
+          fi
+
       - name: Setup Pages
+        continue-on-error: true
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
 
   deploy:
+    needs: build
+    continue-on-error: true
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to GitHub Pages
